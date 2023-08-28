@@ -22,24 +22,27 @@ public class InventoryGrid : MonoBehaviour
     private void Start()
     {
         inventoryManager = InventoryManager.instance;
+
+
+
     }
     private void Update()
     {
 
 
-
+        
 
         if (Input.GetKeyDown(KeyCode.E))
         {
             constantHighlight = !constantHighlight;
         }
-       /* if (inventoryManager.currentHeldItem == null)
-        {
-            UnHighlightAllCells();
-        }*/
+        /* if (inventoryManager.currentHeldItem == null)
+         {
+             UnHighlightAllCells();
+         }*/
         if (inventoryManager.currentHeldItem != null && inventoryManager.currentHeldItem.GetCorners() != null && constantHighlight)
         {
-            Vector3[] c = inventoryManager.currentHeldItem.GetCorners(); 
+            Vector3[] c = inventoryManager.currentHeldItem.GetCorners();
 
 
 
@@ -76,9 +79,9 @@ public class InventoryGrid : MonoBehaviour
             }
 
         }
-        
-        
-       // Debug.Log(cellsWithinCorners.Count + " cells within corners");
+
+
+        // Debug.Log(cellsWithinCorners.Count + " cells within corners");
         return cellsWithinCorners;
     }
     private InventoryCell GetTopLeftCell(List<InventoryCell> cells)
@@ -96,7 +99,7 @@ public class InventoryGrid : MonoBehaviour
 
 
         }
-        Debug.Log(cells.Count+"   "+minIndex);
+        Debug.Log(cells.Count + "   " + minIndex);
         return cells[minIndex];
     }
     public void UnHighlightAllCells()
@@ -116,7 +119,7 @@ public class InventoryGrid : MonoBehaviour
             inventoryManager.currentHeldItem.ResetOccupyingCells();
 
             Debug.Log("can place");
-            PlaceItemInCell( inventoryManager.currentHeldItem);
+            PlaceItemInCell(inventoryManager.currentHeldItem);
             return true;
         }
         else
@@ -148,10 +151,204 @@ public class InventoryGrid : MonoBehaviour
 
         return true;
     }
+    public void LogListContents<T>(List<T> list)
+    {
+        string logMessage = "List Contents:";
+        foreach (T item in list)
+        {
+            logMessage += "\n" + item.ToString();
+        }
+        Debug.Log(logMessage);
+    }
+    public List<InventoryCell> FindEmptySpace( Vector2Int size)
+    {
+        List<InventoryCell> outCells = new List<InventoryCell>();
+        int topY = 0;
+        List<InventoryCell> topCells = new List<InventoryCell>();
+        bool continueFlag = false;
+        foreach (InventoryCell cell in inventoryCells)
+        {
+            Debug.Log(1);
+
+            if (cell.isOccupied)
+            {
+
+                Debug.Log(2);
+
+                continue;
+
+            }
+            else
+            {
+                Debug.Log(3);
+
+                if (GetNextCells(cell, size.x) == null)
+                {
+                    Debug.Log(4);
+
+                    continue;
+                }
+                Debug.Log(5);
+
+                topCells.Add(cell);
+                topCells .AddRange (GetNextCells(cell, size.x));
+                foreach (InventoryCell topCell in topCells)
+                {
+                    Debug.Log(6);
+
+                    outCells.Add(topCell);
+
+                    if(GetLowerCells(topCell, size.y) == null)
+                    {
+                        
+                        continueFlag = true;
+                        break;
+                    }
+                    outCells.AddRange(GetLowerCells(topCell,size.y));
+
+
+                }
+                foreach(InventoryCell outCell in outCells)
+                {
+                    Debug.Log(7);
+
+                    if (outCell.isOccupied)
+                    {
+                        Debug.Log(8);
+
+                        continueFlag = true;
+                        break;
+
+
+                    }
+                }
+                Debug.Log(9);
+
+                if(continueFlag)
+                {
+                    outCells.Clear();
+                        topCells.Clear();
+                    continueFlag=false;
+                    continue;
+                }
+
+                return outCells;
+
+            }
+
+        }
+        return null;
+    }
+    public List<InventoryCell> GetNextCells(InventoryCell cell, int width)
+    {
+        List<InventoryCell> nextCells = new List<InventoryCell>();
+        InventoryCell nextCell = cell;
+
+        for (int i = 1; i < width; i++)
+        {
+            nextCell = GetNextCell(nextCell);
+
+            if (nextCell == null)
+            {
+                Debug.Log("next cells Failed");
+
+                return null;
+
+            }
+
+            nextCells.Add(nextCell);
+
+        }
+        Debug.Log("next cells success");
+        return nextCells;
+    }
+    public InventoryCell GetNextCell(InventoryCell cell)
+    {
+        int cellIndex = inventoryCells.IndexOf(cell);
+        int cellY = cell.position.y;
+        InventoryCell nextCell = null;
+
+        if (cellIndex >= 0 && cellIndex + 1 < inventoryCells.Count)
+        {
+            nextCell = inventoryCells[cellIndex + 1];
+        }
+        else
+        {
+            Debug.Log("Cell index is out of range or invalid.");
+
+            return null;
+
+        }
+
+        if (nextCell == null||nextCell.position.y != cellY  )
+        {
+
+            return null;
+        }
+
+        Debug.Log(cell+" | "+nextCell);
+
+        return nextCell;
+
+    }
+    public List<InventoryCell> GetLowerCells(InventoryCell cell, int height)
+    {
+        List<InventoryCell> lowerCells = new List<InventoryCell>();
+        InventoryCell lowerCell = cell;
+
+        for (int i = 1; i < height; i++)
+        {
+            lowerCell = GetLowerCell(lowerCell);
+
+            if (lowerCell == null)
+            {
+                Debug.Log("lower cells failed");
+
+                return null;
+            }
+
+            lowerCells.Add(lowerCell);
+
+        }
+
+        Debug.Log("lower cells success");
+
+        return lowerCells;
+
+    }
+    public InventoryCell GetLowerCell(InventoryCell cell)
+    {
+        int newIndex = inventoryCells.IndexOf(cell) + size.x;
+        InventoryCell lowerCell = null;
+
+        if (inventoryCells.IndexOf(cell) <= -1)
+        {
+            Debug.Log("Item not in list");
+
+            return null;
+        }
+
+        if(newIndex >= 0 && newIndex + 1 < inventoryCells.Count)
+        {
+            lowerCell= inventoryCells[newIndex];
+
+        }
+        else
+        {
+            Debug.Log("Cell index is out of range or invalid.");
+
+            return null;
+
+        }
+
+
+        Debug.Log(cell + " | " +lowerCell);
+        return lowerCell;
+    }
     public void PlaceItemInCell(InventoryItem item)
     {
         List<GameObject> gameObjectList = new List<GameObject>();
-        Debug.Log(cellsWithinCorners.Count+"h");
+        Debug.Log(cellsWithinCorners.Count + "h");
         foreach (InventoryCell c in cellsWithinCorners)
         {
 
@@ -160,18 +357,18 @@ public class InventoryGrid : MonoBehaviour
 
             gameObjectList.Add(c.gameObject);
         }
-         item.SetOccupyingCells(cellsWithinCorners);
+        item.SetOccupyingCells(cellsWithinCorners);
         Debug.Log("Piic");
         item.occupyingGrid = this;
 
-        item.transform.position = CalculateMiddlePosition(gameObjectList.ToArray()) ;
+        item.transform.position = CalculateMiddlePosition(gameObjectList.ToArray());
 
 
     }
     public void ChangePivotTopLeft(GameObject gameObject)
     {
 
-        gameObject.GetComponent<RectTransform>().pivot =new Vector2(0,1) ;
+        gameObject.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
 
     }
     public void CenterPivot(GameObject gameObject)
@@ -199,7 +396,7 @@ public class InventoryGrid : MonoBehaviour
     }
     public void ActiveGrid()
     {
-       mouseOverGrid = true;
+        mouseOverGrid = true;
         inventoryManager.activeInventoryGrid = this;
 
     }
