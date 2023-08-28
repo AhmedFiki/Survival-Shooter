@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -9,6 +10,7 @@ public class InventoryItem : MonoBehaviour
 {
     RectTransform imageRectTransform;
     public Vector2Int size;
+
     public Vector3[] corners;
     public bool rotated = false;
 
@@ -16,7 +18,8 @@ public class InventoryItem : MonoBehaviour
     public List<InventoryCell> occupyingCells = new List<InventoryCell>();
     public InventoryGrid occupyingGrid = null;
 
-
+    public Image fillImage;
+    public bool depositing = false;
     private void Awake()
     {
         imageRectTransform = GetComponent<RectTransform>();
@@ -25,17 +28,12 @@ public class InventoryItem : MonoBehaviour
 
 
         transform.localScale = Vector2.one * size;
+        transform.GetChild(0).localScale = Vector2.one* new Vector2Int(size.y,size.x)/2;
 
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-
-            Rotate();
-
-
-        }
+        
     }
     public void Resize(Vector2Int newSize)
     {
@@ -45,6 +43,10 @@ public class InventoryItem : MonoBehaviour
         imageRectTransform.GetWorldCorners(corners);
 
     }
+
+    
+
+
     public void Rotate()
     {
         if (!rotated)
@@ -59,7 +61,6 @@ public class InventoryItem : MonoBehaviour
         }
         rotated = !rotated;
 
-        //Resize(new Vector2Int(size.y,size.x));
     }
 
     public void SetOccupyingCells(List<InventoryCell> cells)
@@ -96,5 +97,14 @@ public class InventoryItem : MonoBehaviour
             return corners2;
         else return corners;
 
+    }
+
+    public void SetHighlightedItem()
+    {
+        InventoryManager.instance.currentHighlightedItem = this;
+    }
+    public void ClearHighlightedItem()
+    {
+        InventoryManager.instance.currentHighlightedItem = null;
     }
 }

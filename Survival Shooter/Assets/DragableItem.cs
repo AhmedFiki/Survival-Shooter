@@ -13,7 +13,7 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     InventoryManager inventoryManager;
     InventoryItem inventoryItem;
-
+    bool isDragging=false;
     private void Start()
     {
         inventoryItem = GetComponent<InventoryItem>();
@@ -22,6 +22,11 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (eventData.button != PointerEventData.InputButton.Left)
+        {
+            return; // Ignore other mouse buttons
+        }
+        isDragging = true;
         Debug.Log("Begin Drag");
         startPosition = transform.position;
         inventoryManager.currentHeldItem = GetComponent<InventoryItem>();
@@ -33,11 +38,19 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!isDragging)
+        {
+            return; // Ignore ending drag if not started with left mouse button
+        }
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isDragging)
+        {
+            return; // Ignore ending drag if not started with left mouse button
+        }
 
         if (inventoryManager.activeInventoryGrid.AttemptPlacement())
         {
@@ -55,6 +68,7 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         image.raycastTarget = true;
         inventoryManager.currentHeldItem = null;
         transform.SetAsFirstSibling();
+        isDragging = false;
 
 
     }

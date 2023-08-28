@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 
@@ -18,6 +17,7 @@ public class InventoryGrid : MonoBehaviour
     bool constantHighlight = true;
     public bool mouseOverGrid = false;
 
+    public InventoryType inventoryType;
 
     private void Start()
     {
@@ -30,7 +30,7 @@ public class InventoryGrid : MonoBehaviour
     {
 
 
-        
+
 
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -116,10 +116,10 @@ public class InventoryGrid : MonoBehaviour
 
         if (CanPlace())
         {
-            inventoryManager.currentHeldItem.ResetOccupyingCells();
+            //inventoryManager.currentHeldItem.ResetOccupyingCells();
 
             Debug.Log("can place");
-            PlaceItemInCell(inventoryManager.currentHeldItem);
+            PlaceItemInCell(inventoryManager.currentHeldItem, cellsWithinCorners);
             return true;
         }
         else
@@ -160,7 +160,7 @@ public class InventoryGrid : MonoBehaviour
         }
         Debug.Log(logMessage);
     }
-    public List<InventoryCell> FindEmptySpace( Vector2Int size)
+    public List<InventoryCell> FindEmptySpace(Vector2Int size)
     {
         List<InventoryCell> outCells = new List<InventoryCell>();
         int topY = 0;
@@ -168,74 +168,60 @@ public class InventoryGrid : MonoBehaviour
         bool continueFlag = false;
         foreach (InventoryCell cell in inventoryCells)
         {
-            Debug.Log(1);
 
             if (cell.isOccupied)
             {
 
-                Debug.Log(2);
 
                 continue;
 
             }
             else
             {
-                Debug.Log(3);
-
                 if (GetNextCells(cell, size.x) == null)
                 {
-                    Debug.Log(4);
-
                     continue;
                 }
-                Debug.Log(5);
 
                 topCells.Add(cell);
-                topCells .AddRange (GetNextCells(cell, size.x));
+                topCells.AddRange(GetNextCells(cell, size.x));
                 foreach (InventoryCell topCell in topCells)
                 {
-                    Debug.Log(6);
 
                     outCells.Add(topCell);
 
-                    if(GetLowerCells(topCell, size.y) == null)
+                    if (GetLowerCells(topCell, size.y) == null)
                     {
-                        
+
                         continueFlag = true;
                         break;
                     }
-                    outCells.AddRange(GetLowerCells(topCell,size.y));
+                    outCells.AddRange(GetLowerCells(topCell, size.y));
 
 
                 }
-                foreach(InventoryCell outCell in outCells)
+                foreach (InventoryCell outCell in outCells)
                 {
-                    Debug.Log(7);
-
                     if (outCell.isOccupied)
                     {
-                        Debug.Log(8);
-
                         continueFlag = true;
                         break;
 
 
                     }
                 }
-                Debug.Log(9);
 
-                if(continueFlag)
+                if (continueFlag)
                 {
                     outCells.Clear();
-                        topCells.Clear();
-                    continueFlag=false;
+                    topCells.Clear();
+                    continueFlag = false;
                     continue;
                 }
 
                 return outCells;
 
             }
-
         }
         return null;
     }
@@ -280,13 +266,13 @@ public class InventoryGrid : MonoBehaviour
 
         }
 
-        if (nextCell == null||nextCell.position.y != cellY  )
+        if (nextCell == null || nextCell.position.y != cellY)
         {
 
             return null;
         }
 
-        Debug.Log(cell+" | "+nextCell);
+        Debug.Log(cell + " | " + nextCell);
 
         return nextCell;
 
@@ -328,9 +314,9 @@ public class InventoryGrid : MonoBehaviour
             return null;
         }
 
-        if(newIndex >= 0 && newIndex + 1 < inventoryCells.Count)
+        if (newIndex >= 0 && newIndex + 1 < inventoryCells.Count)
         {
-            lowerCell= inventoryCells[newIndex];
+            lowerCell = inventoryCells[newIndex];
 
         }
         else
@@ -342,14 +328,16 @@ public class InventoryGrid : MonoBehaviour
         }
 
 
-        Debug.Log(cell + " | " +lowerCell);
+        Debug.Log(cell + " | " + lowerCell);
         return lowerCell;
     }
-    public void PlaceItemInCell(InventoryItem item)
+    public void PlaceItemInCell(InventoryItem item, List<InventoryCell> cells)
     {
+        item.ResetOccupyingCells();
+
         List<GameObject> gameObjectList = new List<GameObject>();
-        Debug.Log(cellsWithinCorners.Count + "h");
-        foreach (InventoryCell c in cellsWithinCorners)
+        Debug.Log(cells.Count + "h");
+        foreach (InventoryCell c in cells)
         {
 
             c.isOccupied = true;
@@ -357,11 +345,36 @@ public class InventoryGrid : MonoBehaviour
 
             gameObjectList.Add(c.gameObject);
         }
-        item.SetOccupyingCells(cellsWithinCorners);
+        item.SetOccupyingCells(cells);
         Debug.Log("Piic");
         item.occupyingGrid = this;
 
         item.transform.position = CalculateMiddlePosition(gameObjectList.ToArray());
+
+
+    }
+    public void DepositItem(InventoryItem inventoryItem)
+    {
+        List<InventoryCell> cells = new List<InventoryCell>();
+
+        if (inventoryItem.rotated)
+        {
+            cells = FindEmptySpace(new Vector2Int(inventoryItem.size.y, inventoryItem.size.x));
+
+        }
+        else
+        {
+            cells = FindEmptySpace(inventoryItem.size);
+
+        }
+
+        if (cells == null)
+        {
+            Debug.Log("Inventory full or no viable position");
+            return;
+        }
+
+        PlaceItemInCell(inventoryItem, cells);
 
 
     }
@@ -397,12 +410,27 @@ public class InventoryGrid : MonoBehaviour
     public void ActiveGrid()
     {
         mouseOverGrid = true;
+
+
         inventoryManager.activeInventoryGrid = this;
+
+
 
     }
     public void DeActiveGrid()
     {
         mouseOverGrid = false;
+
         inventoryManager.activeInventoryGrid = null;
+
+
     }
+}
+public enum InventoryType
+{
+
+    player,
+    other,
+    chest,
+    body
 }
