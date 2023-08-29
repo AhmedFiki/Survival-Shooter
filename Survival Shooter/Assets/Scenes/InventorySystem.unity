@@ -788,6 +788,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 1043278551}
+  depositing: 0
 --- !u!114 &59358347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1861,6 +1862,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 108684804}
+  depositing: 0
 --- !u!114 &242863677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5197,6 +5199,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 2138732400}
+  depositing: 0
 --- !u!114 &579441213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14816,7 +14819,8 @@ MonoBehaviour:
   lootInventoryGrid: {fileID: 612956588}
   playerInventoryGrid: {fileID: 1346409819}
   dragging: 0
-  depositDuration: 1
+  depositDuration: 0.5
+  depositEase: 34
 --- !u!1 &1431015050
 GameObject:
   m_ObjectHideFlags: 0
@@ -15845,6 +15849,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 1507564173}
+  depositing: 0
 --- !u!114 &1600429202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16415,6 +16420,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 714584230}
+  depositing: 0
 --- !u!114 &1620024729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18112,6 +18118,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 330284002}
+  depositing: 0
 --- !u!114 &1830251671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20031,6 +20038,7 @@ MonoBehaviour:
   occupyingCells: []
   occupyingGrid: {fileID: 0}
   fillImage: {fileID: 1839816355}
+  depositing: 0
 --- !u!114 &1972318372
 MonoBehaviour:
   m_ObjectHideFlags: 0
