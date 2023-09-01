@@ -70,13 +70,11 @@ public class InventoryCell : MonoBehaviour
 
     public void ChangeColorTo(Color color)
     {
-        // Change the image color to blue
         GetComponent<Image>().color = color;
     }
 
     public void ResetColor()
     {
-        // Reset the image color to its original color
         GetComponent<Image>().color = originalColor;
     }
 }

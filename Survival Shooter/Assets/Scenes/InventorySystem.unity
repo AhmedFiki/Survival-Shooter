@@ -5811,6 +5811,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 612956588}
+          m_TargetAssemblyTypeName: InventoryGrid, Assembly-CSharp
+          m_MethodName: UnHighlightAllCells
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &614073349
 GameObject:
   m_ObjectHideFlags: 0
@@ -14285,6 +14301,22 @@ MonoBehaviour:
         - m_Target: {fileID: 1346409819}
           m_TargetAssemblyTypeName: InventoryGrid, Assembly-CSharp
           m_MethodName: ActiveGrid
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1346409819}
+          m_TargetAssemblyTypeName: InventoryGrid, Assembly-CSharp
+          m_MethodName: UnHighlightAllCells
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

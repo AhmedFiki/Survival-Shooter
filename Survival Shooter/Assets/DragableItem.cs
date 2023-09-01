@@ -40,7 +40,7 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     {
         if (!isDragging)
         {
-            return; // Ignore ending drag if not started with left mouse button
+            return;
         }
         transform.position = Input.mousePosition;
     }
@@ -49,10 +49,10 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     {
         if (!isDragging)
         {
-            return; // Ignore ending drag if not started with left mouse button
+            return; 
         }
 
-        if (inventoryManager.activeInventoryGrid.AttemptPlacement())
+        if (inventoryManager.activeInventoryGrid!=null && inventoryManager.activeInventoryGrid.AttemptPlacement() )
         {
 
         }

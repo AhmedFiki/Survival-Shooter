@@ -6,7 +6,7 @@ using UnityEngine;
 public class InventoryGrid : MonoBehaviour
 {
     public Vector2Int size;
-    public Vector2 cellSize; // The size of each grid cell
+    public Vector2 cellSize; 
 
     [SerializeField]
     List<InventoryCell> inventoryCells = new List<InventoryCell>();
@@ -47,7 +47,6 @@ public class InventoryGrid : MonoBehaviour
 
 
 
-            //Debug.Log(c[0] + " " + c[1] + " " + c[2] + " " + c[3]);
             cellsWithinCorners = GetCellsWithinCorners(c);
         }
     }
@@ -56,7 +55,6 @@ public class InventoryGrid : MonoBehaviour
     private List<InventoryCell> GetCellsWithinCorners(Vector3[] corners)
     {
         cellsWithinCorners.Clear();
-        // Determine the minimum and maximum x and y values from the corners
         float minX = Mathf.Min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
         float maxX = Mathf.Max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
         float minY = Mathf.Min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
@@ -66,7 +64,6 @@ public class InventoryGrid : MonoBehaviour
         {
 
 
-            //  Debug.Log(cell.transform.position.x + " " + cell.transform.position.y + " ; " + corners[0] + " " + corners[2]);
             if (cell.transform.position.x >= corners[0].x && cell.transform.position.x <= corners[2].x &&
                 cell.transform.position.y >= corners[0].y && cell.transform.position.y <= corners[2].y)
             {
@@ -81,7 +78,6 @@ public class InventoryGrid : MonoBehaviour
         }
 
 
-        // Debug.Log(cellsWithinCorners.Count + " cells within corners");
         return cellsWithinCorners;
     }
     private InventoryCell GetTopLeftCell(List<InventoryCell> cells)
@@ -112,11 +108,9 @@ public class InventoryGrid : MonoBehaviour
 
     public bool AttemptPlacement()
     {
-        //GetCellsWithinCorners(inventoryManager.currentHeldItem.GetCorners());
 
         if (CanPlace())
         {
-            //inventoryManager.currentHeldItem.ResetOccupyingCells();
 
             Debug.Log("can place");
             PlaceItemInCell(inventoryManager.currentHeldItem, cellsWithinCorners);
