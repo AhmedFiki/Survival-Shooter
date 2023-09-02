@@ -34,19 +34,25 @@ public class GunContainer : MonoBehaviour
     public float accuracyRecoveryRate = 0.1f;
     public float maxRecoilTime = 0.5f;
     private float currentRecoilTime;
+    public float minAccurateDistance = 10.0f;
+    public float maxAccurateDistance = 12.0f;
 
     private float currentAccuracy;
-
+    public float recoilFactor = 1;
+    Vector3 mousePosition;
     private void Start()
     {
         currentAmmo = magazineSize;
+        currentAccuracy = maxAccuracy;
     }
     private void Update()
     {
+        CalculateAccuracy();
         if (isReloading)
         {
             return;
         }
+
 
         if (Input.GetButton("Fire1") && Time.time >= nextShotTime)
         {
@@ -54,12 +60,38 @@ public class GunContainer : MonoBehaviour
             Shoot();
         }
 
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reload();
         }
     }
-    
+
+    void CalculateAccuracy()
+    {
+        //Mouse distance accuracy
+
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float distanceToMouse = Vector2.Distance(transform.position, mousePosition);
+
+
+
+        if (distanceToMouse <= minAccurateDistance)
+        {
+            currentAccuracy = maxAccuracy;
+        }
+        else
+        {
+
+            float distanceFromMin = (distanceToMouse - minAccurateDistance);
+
+            currentAccuracy = maxAccuracy - ((distanceToMouse - minAccurateDistance) / (maxAccurateDistance - minAccurateDistance)) ;
+
+            currentAccuracy = Mathf.Clamp01(currentAccuracy); 
+        }
+
+
+    }
     private void Shoot()
     {
         if (currentAmmo <= 0)
@@ -68,13 +100,22 @@ public class GunContainer : MonoBehaviour
             return;
         }
 
+
+
         PlayShootingEffects();
 
         Vector3 adjustedAimDirection = CalculateAdjustedAimDirection();
+        float deviationAngle = Random.Range(0f, 50f); 
+        Vector3 deviation = Quaternion.Euler(0f, 0f, deviationAngle) * adjustedAimDirection * (1.0f - currentAccuracy) * recoilFactor;
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        //bullet.transform.right = adjustedAimDirection;
+        Bullet bulletController = bullet.GetComponent<Bullet>();
 
+        if (bulletController != null)
+        {
+
+            bulletController.SetDirection(transform.right+ deviation);
+        }
 
         ApplyRecoil();
 
@@ -88,20 +129,18 @@ public class GunContainer : MonoBehaviour
 
 
     }
-
+    
     private void ApplyRecoil()
     {
         if (currentRecoilTime <= 0f)
         {
-            currentRecoilTime = maxRecoilTime;
-            Vector3 recoilDirection = -firePoint.up;
-            transform.position += recoilDirection * recoil;
+
         }
     }
 
     private Vector3 CalculateAdjustedAimDirection()
     {
-        Vector2 randomOffset = Random.insideUnitCircle * (1.0f - currentAccuracy);
+        Vector2 randomOffset = Random.insideUnitCircle * (1.0f - currentAccuracy) ;
         Vector3 adjustedAimDirection = defaultAimDirection + new Vector3(randomOffset.x, randomOffset.y, 0f);
         return adjustedAimDirection.normalized;
     }
@@ -137,5 +176,14 @@ public class GunContainer : MonoBehaviour
 
         isReloading = false;
     }
+    private void OnGUI()
+    {
+        float circleRadius = (1.0f - currentAccuracy) * 50.0f; 
+        Vector2 screenMousePosition = Camera.main.WorldToScreenPoint(mousePosition);
+        Vector2 guiPosition = new Vector2(screenMousePosition.x - circleRadius, Screen.height - screenMousePosition.y - circleRadius);
+        GUI.color = new Color(1f, 1f, 1f, 0.5f); 
+        GUI.Box(new Rect(guiPosition.x, guiPosition.y, circleRadius * 2, circleRadius * 2), "");
+    }
+ 
 }
 

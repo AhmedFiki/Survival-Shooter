@@ -335,11 +335,18 @@ MonoBehaviour:
   currentAmmo: 0
   ammoPool: 9999
   isReloading: 0
-  accuracy: 0
-  recoil: 0
+  accuracy: 1
+  recoil: 0.1
   bulletPrefab: {fileID: 2274302178452088826, guid: 0ae8a2511617f164aa00fc9914e06e5e, type: 3}
   firePoint: {fileID: 309273525}
   bulletSpeed: 99
+  maxAccuracy: 1
+  accuracyLossPerShot: 0.1
+  accuracyRecoveryRate: 0.1
+  maxRecoilTime: 0.5
+  minAccurateDistance: 5
+  maxAccurateDistance: 20
+  recoilFactor: 0.25
 --- !u!1 &1583076818
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,11 +405,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: -10
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
